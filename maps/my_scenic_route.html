@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_6f934b44c5e2c8a7799a43f05e862a6f {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+    
+                    <style>
+                        .foliumtooltip {
+                            
+                        }
+                       .foliumtooltip table{
+                            margin: auto;
+                        }
+                        .foliumtooltip tr{
+                            text-align: left;
+                        }
+                        .foliumtooltip th{
+                            padding: 2px; padding-right: 8px;
+                        }
+                    </style>
+            
+</head>
+<body>
+    
+    
+            <div class="folium-map" id="map_6f934b44c5e2c8a7799a43f05e862a6f" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_6f934b44c5e2c8a7799a43f05e862a6f = L.map(
+                "map_6f934b44c5e2c8a7799a43f05e862a6f",
+                {
+                    center: [45.5041198, -73.56385915],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 10,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+            L.control.scale().addTo(map_6f934b44c5e2c8a7799a43f05e862a6f);
+
+            
+
+        
+    
+            var tile_layer_76198f1b5e74c727cdc2037e76f26ed6 = L.tileLayer(
+                "https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 20,
+  "maxNativeZoom": 20,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors \u0026copy; \u003ca href=\"https://carto.com/attributions\"\u003eCARTO\u003c/a\u003e",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_76198f1b5e74c727cdc2037e76f26ed6.addTo(map_6f934b44c5e2c8a7799a43f05e862a6f);
+        
+    
+            map_6f934b44c5e2c8a7799a43f05e862a6f.fitBounds(
+                [[45.5013629, -73.5746601], [45.5068767, -73.5530582]],
+                {}
+            );
+        
+    
+        function geo_json_7b828ca0b1cc8af738345c8bf652cbfe_styler(feature) {
+            switch(feature.id) {
+                default:
+                    return {"color": "blue", "fillColor": "blue", "fillOpacity": 0.5, "opacity": 0.8, "weight": 8};
+            }
+        }
+        function geo_json_7b828ca0b1cc8af738345c8bf652cbfe_highlighter(feature) {
+            switch(feature.id) {
+                default:
+                    return {"fillOpacity": 0.75};
+            }
+        }
+        function geo_json_7b828ca0b1cc8af738345c8bf652cbfe_pointToLayer(feature, latlng) {
+            var opts = {
+  "stroke": true,
+  "color": "#3388ff",
+  "weight": 3,
+  "opacity": 1.0,
+  "lineCap": "round",
+  "lineJoin": "round",
+  "dashArray": null,
+  "dashOffset": null,
+  "fill": true,
+  "fillColor": "#3388ff",
+  "fillOpacity": 0.2,
+  "fillRule": "evenodd",
+  "bubblingMouseEvents": true,
+  "radius": 2,
+};
+            
+            let style = geo_json_7b828ca0b1cc8af738345c8bf652cbfe_styler(feature)
+            Object.assign(opts, style)
+            
+            return new L.CircleMarker(latlng, opts)
+        }
+
+        function geo_json_7b828ca0b1cc8af738345c8bf652cbfe_onEachFeature(feature, layer) {
+
+            layer.on({
+                mouseout: function(e) {
+                    if(typeof e.target.setStyle === "function"){
+                            geo_json_7b828ca0b1cc8af738345c8bf652cbfe.resetStyle(e.target);
+                    }
+                },
+                mouseover: function(e) {
+                    if(typeof e.target.setStyle === "function"){
+                        const highlightStyle = geo_json_7b828ca0b1cc8af738345c8bf652cbfe_highlighter(e.target.feature)
+                        e.target.setStyle(highlightStyle);
+                    }
+                },
+            });
+        };
+        var geo_json_7b828ca0b1cc8af738345c8bf652cbfe = L.geoJson(null, {
+                onEachFeature: geo_json_7b828ca0b1cc8af738345c8bf652cbfe_onEachFeature,
+            
+                style: geo_json_7b828ca0b1cc8af738345c8bf652cbfe_styler,
+                pointToLayer: geo_json_7b828ca0b1cc8af738345c8bf652cbfe_pointToLayer,
+            ...{
+}
+        });
+
+        function geo_json_7b828ca0b1cc8af738345c8bf652cbfe_add (data) {
+            geo_json_7b828ca0b1cc8af738345c8bf652cbfe
+                .addData(data);
+        }
+            geo_json_7b828ca0b1cc8af738345c8bf652cbfe_add({"bbox": [-73.5746601, 45.5013629, -73.5530582, 45.5068767], "features": [{"bbox": [-73.5746601, 45.5037734, -73.5740782, 45.5043647], "geometry": {"coordinates": [[-73.5746601, 45.5037734], [-73.5745858, 45.503851], [-73.5745253, 45.503913], [-73.5741255, 45.5043168], [-73.5740782, 45.5043647]], "type": "LineString"}, "id": "(11582633983, 229561217, 0)", "properties": {"__folium_color": "blue", "highway": "primary", "lanes": "4", "length": 79.87301617655275, "maxspeed": "50", "name": "Rue Sherbrooke Ouest", "oneway": false, "osmid": "111771059", "ref": "138", "reversed": false, "scenic_context": "No Data", "scenic_cost": 159.7460323531055, "scenic_score": "0.5", "width": null}, "type": "Feature"}, {"bbox": [-73.5740782, 45.5043647, -73.5735158, 45.5049368], "geometry": {"coordinates": [[-73.5740782, 45.5043647], [-73.5740288, 45.5044151], [-73.5735595, 45.5048939], [-73.573539, 45.504914], [-73.5735158, 45.5049368]], "type": "LineString"}, "id": "(229561217, 10865462896, 0)", "properties": {"__folium_color": "blue", "highway": "primary", "lanes": "4", "length": 77.25223230539227, "maxspeed": "50", "name": "Rue Sherbrooke Ouest", "oneway": false, "osmid": "111771059", "ref": "138", "reversed": false, "scenic_context": "Mixed / Urban", "scenic_cost": 147.49203270460384, "scenic_score": "0.5237722396850586", "width": null}, "type": "Feature"}, {"bbox": [-73.5735158, 45.5044389, -73.5724968, 45.5049368], "geometry": {"coordinates": [[-73.5735158, 45.5049368], [-73.5734063, 45.5048817], [-73.5733753, 45.5048647], [-73.5726186, 45.5045012], [-73.5725892, 45.5044842], [-73.5724968, 45.5044389]], "type": "LineString"}, "id": "(10865462896, 11282356905, 0)", "properties": {"__folium_color": "blue", "highway": "cycleway", "lanes": null, "length": 96.82378007817826, "maxspeed": null, "name": "Boulevard Robert-Bourassa", "oneway": false, "osmid": "[1217640683, 1217640684, 1217640685]", "ref": null, "reversed": false, "scenic_context": "Inferred (Path)", "scenic_cost": 121.02972509772282, "scenic_score": "0.8", "width": null}, "type": "Feature"}, {"bbox": [-73.5724968, 45.5040194, -73.5716327, 45.5044389], "geometry": {"coordinates": [[-73.5724968, 45.5044389], [-73.5724425, 45.504411], [-73.572415, 45.5043979], [-73.5723877, 45.5043845], [-73.5717468, 45.50407], [-73.5717011, 45.5040497], [-73.5716327, 45.5040194]], "type": "LineString"}, "id": "(11282356905, 11282356947, 0)", "properties": {"__folium_color": "blue", "highway": "cycleway", "lanes": null, "length": 81.93063013448268, "maxspeed": null, "name": "Boulevard Robert-Bourassa", "oneway": false, "osmid": "[1217640715, 1217640712, 1217640683, 1217640713]", "ref": null, "reversed": false, "scenic_context": "Inferred (Path)", "scenic_cost": 102.41328766810335, "scenic_score": "0.8", "width": null}, "type": "Feature"}, {"bbox": [-73.5716327, 45.5039882, -73.5715623, 45.5040194], "geometry": {"coordinates": [[-73.5716327, 45.5040194], [-73.5715623, 45.5039882]], "type": "LineString"}, "id": "(11282356947, 11282356948, 0)", "properties": {"__folium_color": "blue", "highway": "cycleway", "lanes": null, "length": 6.491284097886808, "maxspeed": null, "name": null, "oneway": false, "osmid": "1217640713", "ref": null, "reversed": false, "scenic_context": "Inferred (Path)", "scenic_cost": 8.11410512235851, "scenic_score": "0.8", "width": null}, "type": "Feature"}, {"bbox": [-73.5715623, 45.5039882, -73.5715384, 45.5040117], "geometry": {"coordinates": [[-73.5715623, 45.5039882], [-73.5715384, 45.5040117]], "type": "LineString"}, "id": "(11282356948, 11175132658, 0)", "properties": {"__folium_color": "blue", "highway": "cycleway", "lanes": null, "length": 3.208957253839985, "maxspeed": null, "name": "Boulevard De Maisonneuve Ouest", "oneway": false, "osmid": "998268054", "ref": null, "reversed": false, "scenic_context": "Inferred (Path)", "scenic_cost": 4.011196567299981, "scenic_score": "0.8", "width": null}, "type": "Feature"}, {"bbox": [-73.5715384, 45.5040117, -73.571005, 45.5046247], "geometry": {"coordinates": [[-73.5715384, 45.5040117], [-73.57148, 45.5040697], [-73.5714525, 45.5040962], [-73.571286, 45.5042743], [-73.5711625, 45.5044158], [-73.5710544, 45.5045555], [-73.571005, 45.5046247]], "type": "LineString"}, "id": "(11175132658, 4170219664, 0)", "properties": {"__folium_color": "blue", "highway": "cycleway", "lanes": null, "length": 79.9329217850437, "maxspeed": null, "name": "Boulevard De Maisonneuve Ouest", "oneway": false, "osmid": "998268054", "ref": null, "reversed": false, "scenic_context": "Mixed / Urban", "scenic_cost": 202.8655878092308, "scenic_score": "0.39401912689208984", "width": null}, "type": "Feature"}, {"bbox": [-73.571005, 45.5044719, -73.5706821, 45.5046247], "geometry": {"coordinates": [[-73.571005, 45.5046247], [-73.5709601, 45.5046049], [-73.5706821, 45.5044719]], "type": "LineString"}, "id": "(4170219664, 13085243009, 0)", "properties": {"__folium_color": "blue", "highway": "residential", "lanes": "1", "length": 30.365455336865942, "maxspeed": null, "name": "Avenue Union", "oneway": true, "osmid": "329384212", "ref": null, "reversed": false, "scenic_context": "Mixed / Urban", "scenic_cost": 77.06594239822815, "scenic_score": "0.39401912689208984", "width": null}, "type": "Feature"}, {"bbox": [-73.5706821, 45.5044224, -73.5705787, 45.5044719], "geometry": {"coordinates": [[-73.5706821, 45.5044719], [-73.5705787, 45.5044224]], "type": "LineString"}, "id": "(13085243009, 13085243006, 0)", "properties": {"__folium_color": "blue", "highway": "residential", "lanes": "1", "length": 9.758534999197432, "maxspeed": null, "name": "Avenue Union", "oneway": true, "osmid": "329384212", "ref": null, "reversed": false, "scenic_context": "Mixed / Urban", "scenic_cost": 28.82786387903347, "scenic_score": "0.33851051330566406", "width": null}, "type": "Feature"}, {"bbox": [-73.5705787, 45.5039618, -73.5696184, 45.5044224], "geometry": {"coordinates": [[-73.5705787, 45.5044224], [-73.5704064, 45.5043399], [-73.5702756, 45.5042771], [-73.5699066, 45.5041001], [-73.5696184, 45.5039618]], "type": "LineString"}, "id": "(13085243006, 1302782850, 0)", "properties": {"__folium_color": "blue", "highway": "residential", "lanes": "1", "length": 90.68543349542846, "maxspeed": null, "name": "Avenue Union", "oneway": true, "osmid": "329384212", "ref": null, "reversed": false, "scenic_context": "Mixed / Urban", "scenic_cost": 267.89547128051066, "scenic_score": "0.33851051330566406", "width": null}, "type": "Feature"}, {"bbox": [-73.5696184, 45.5037719, -73.5692099, 45.5039618], "geometry": {"coordinates": [[-73.5696184, 45.5039618], [-73.569343, 45.5038336], [-73.5692873, 45.5038076], [-73.5692099, 45.5037719]], "type": "LineString"}, "id": "(1302782850, 2889868395, 0)", "properties": {"__folium_color": "blue", "highway": "residential", "lanes": "1", "length": 38.201797766168546, "maxspeed": null, "name": "Avenue Union", "oneway": true, "osmid": "329384212", "ref": null, "reversed": false, "scenic_context": "Mixed / Urban", "scenic_cost": 94.88810577739918, "scenic_score": "0.40259838104248047", "width": null}, "type": "Feature"}, {"bbox": [-73.5692099, 45.5033819, -73.5684388, 45.5037719], "geometry": {"coordinates": [[-73.5692099, 45.5037719], [-73.5691445, 45.5037388], [-73.568512, 45.5034234], [-73.5684388, 45.5033819]], "type": "LineString"}, "id": "(2889868395, 2889868393, 0)", "properties": {"__folium_color": "blue", "highway": "residential", "lanes": "1", "length": 74.11980065627198, "maxspeed": null, "name": "Avenue Union", "oneway": true, "osmid": "329384214", "ref": null, "reversed": false, "scenic_context": "Mixed / Urban", "scenic_cost": 202.06758295209892, "scenic_score": "0.3668069839477539", "width": null}, "type": "Feature"}, {"bbox": [-73.5684388, 45.5033819, -73.5680532, 45.5037905], "geometry": {"coordinates": [[-73.5684388, 45.5033819], [-73.5683782, 45.5034468], [-73.5681229, 45.5037205], [-73.568093, 45.5037505], [-73.5680532, 45.5037905]], "type": "LineString"}, "id": "(2889868393, 2889868394, 0)", "properties": {"__folium_color": "blue", "highway": "residential", "lanes": null, "length": 54.47677876465031, "maxspeed": null, "name": "Rue Cathcart", "oneway": true, "osmid": "1042770937", "ref": null, "reversed": false, "scenic_context": "Mixed / Urban", "scenic_cost": 148.5161982968397, "scenic_score": "0.3668069839477539", "width": null}, "type": "Feature"}, {"bbox": [-73.5680532, 45.5034551, -73.5673631, 45.5037905], "geometry": {"coordinates": [[-73.5680532, 45.5037905], [-73.5673631, 45.5034551]], "type": "LineString"}, "id": "(2889868394, 11379816530, 0)", "properties": {"__folium_color": "blue", "highway": "residential", "lanes": null, "length": 65.44719209517079, "maxspeed": "30", "name": "Place Phillips", "oneway": false, "osmid": "108603837", "ref": null, "reversed": false, "scenic_context": "No Data", "scenic_cost": 130.89438419034158, "scenic_score": "0.5", "width": null}, "type": "Feature"}, {"bbox": [-73.5673631, 45.5032287, -73.5669105, 45.5034551], "geometry": {"coordinates": [[-73.5673631, 45.5034551], [-73.5669105, 45.5032287]], "type": "LineString"}, "id": "(11379816530, 262255346, 0)", "properties": {"__folium_color": "blue", "highway": "residential", "lanes": null, "length": 43.334831167254904, "maxspeed": "30", "name": "Place Phillips", "oneway": false, "osmid": "108603837", "ref": null, "reversed": false, "scenic_context": "No Data", "scenic_cost": 86.66966233450981, "scenic_score": "0.5", "width": null}, "type": "Feature"}, {"bbox": [-73.5669105, 45.5030507, -73.5664932, 45.5032287], "geometry": {"coordinates": [[-73.5669105, 45.5032287], [-73.5667367, 45.5030876], [-73.5666736, 45.5030642], [-73.5666415, 45.5030507], [-73.5664932, 45.5030732]], "type": "LineString"}, "id": "(262255346, 29796361, 0)", "properties": {"__folium_color": "blue", "highway": "residential", "lanes": "2", "length": 41.03367396202779, "maxspeed": "30", "name": "Place du Fr\u00e8re-Andr\u00e9", "oneway": true, "osmid": "[1416191208, 1416191202, 108599846]", "ref": null, "reversed": false, "scenic_context": "Mixed / Urban", "scenic_cost": 85.2376160059416, "scenic_score": "0.4814033508300781", "width": null}, "type": "Feature"}, {"bbox": [-73.5664932, 45.5030319, -73.5663334, 45.5030732], "geometry": {"coordinates": [[-73.5664932, 45.5030732], [-73.5663334, 45.5030319]], "type": "LineString"}, "id": "(29796361, 3391132757, 0)", "properties": {"__folium_color": "blue", "highway": "tertiary", "lanes": "2", "length": 13.273506254396175, "maxspeed": "40", "name": "C\u00f4te du Beaver Hall", "oneway": false, "osmid": "453981163", "ref": null, "reversed": false, "scenic_context": "Mixed / Urban", "scenic_cost": 27.57252568248398, "scenic_score": "0.4814033508300781", "width": null}, "type": "Feature"}, {"bbox": [-73.5663334, 45.5026532, -73.5654684, 45.5030319], "geometry": {"coordinates": [[-73.5663334, 45.5030319], [-73.5661899, 45.5029914], [-73.5661586, 45.5029804], [-73.565696, 45.5027593], [-73.5654684, 45.5026532]], "type": "LineString"}, "id": "(3391132757, 1281789488, 0)", "properties": {"__folium_color": "blue", "highway": "tertiary", "lanes": "2", "length": 79.72491590359675, "maxspeed": "40", "name": "C\u00f4te du Beaver Hall", "oneway": false, "osmid": "24221231", "ref": null, "reversed": false, "scenic_context": "No Data", "scenic_cost": 159.4498318071935, "scenic_score": "0.5", "width": null}, "type": "Feature"}, {"bbox": [-73.5654684, 45.5024184, -73.5649622, 45.5026532], "geometry": {"coordinates": [[-73.5654684, 45.5026532], [-73.5650647, 45.5024612], [-73.5650353, 45.5024477], [-73.5649622, 45.5024184]], "type": "LineString"}, "id": "(1281789488, 208756285, 0)", "properties": {"__folium_color": "blue", "highway": "tertiary", "lanes": "2", "length": 47.32382209587271, "maxspeed": "40", "name": "C\u00f4te du Beaver Hall", "oneway": false, "osmid": "455083987", "ref": null, "reversed": false, "scenic_context": "No Data", "scenic_cost": 94.64764419174541, "scenic_score": "0.5", "width": null}, "type": "Feature"}, {"bbox": [-73.5649622, 45.5022253, -73.5642053, 45.5024184], "geometry": {"coordinates": [[-73.5649622, 45.5024184], [-73.5648792, 45.5023871], [-73.5648459, 45.5023755], [-73.5647817, 45.5023537], [-73.5647095, 45.5023307], [-73.564633, 45.5023084], [-73.5645429, 45.5022864], [-73.5644627, 45.5022695], [-73.564401, 45.5022573], [-73.5643329, 45.5022435], [-73.5642903, 45.5022361], [-73.5642053, 45.5022253]], "type": "LineString"}, "id": "(208756285, 208710068, 0)", "properties": {"__folium_color": "blue", "highway": "tertiary", "lanes": "2", "length": 63.077472832608855, "maxspeed": "40", "name": "C\u00f4te du Beaver Hall", "oneway": false, "osmid": "466675150", "ref": null, "reversed": false, "scenic_context": "Mixed / Urban", "scenic_cost": 171.22777935301949, "scenic_score": "0.36838340759277344", "width": null}, "type": "Feature"}, {"bbox": [-73.5642053, 45.5019399, -73.5631502, 45.5022253], "geometry": {"coordinates": [[-73.5642053, 45.5022253], [-73.5641187, 45.5022131], [-73.5640799, 45.5022078], [-73.5640134, 45.5021959], [-73.5639227, 45.50218], [-73.5638492, 45.5021654], [-73.563775, 45.5021491], [-73.5637119, 45.5021335], [-73.5636323, 45.502112], [-73.5635521, 45.5020882], [-73.5634774, 45.5020659], [-73.5633786, 45.5020338], [-73.5632773, 45.502], [-73.5632348, 45.5019832], [-73.5631882, 45.5019608], [-73.5631502, 45.5019399]], "type": "LineString"}, "id": "(208710068, 208721772, 0)", "properties": {"__folium_color": "blue", "highway": "tertiary", "lanes": "2", "length": 88.79431999488058, "maxspeed": "40", "name": "C\u00f4te du Beaver Hall", "oneway": false, "osmid": "361607072", "ref": null, "reversed": false, "scenic_context": "Mixed / Urban", "scenic_cost": 189.2280751789023, "scenic_score": "0.46924495697021484", "width": null}, "type": "Feature"}, {"bbox": [-73.5631502, 45.5013944, -73.5619344, 45.5019399], "geometry": {"coordinates": [[-73.5631502, 45.5019399], [-73.5630691, 45.5018941], [-73.5620518, 45.5014496], [-73.56202, 45.5014348], [-73.5619344, 45.5013944]], "type": "LineString"}, "id": "(208721772, 32124694, 0)", "properties": {"__folium_color": "blue", "highway": "tertiary", "lanes": "2", "length": 112.56304085450992, "maxspeed": "30", "name": "Rue du Square Victoria", "oneway": true, "osmid": "19896202", "ref": null, "reversed": false, "scenic_context": "Mixed / Urban", "scenic_cost": 191.30643176777363, "scenic_score": "0.5883913040161133", "width": null}, "type": "Feature"}, {"bbox": [-73.5619344, 45.5013629, -73.5618699, 45.5013944], "geometry": {"coordinates": [[-73.5619344, 45.5013944], [-73.5618699, 45.5013629]], "type": "LineString"}, "id": "(32124694, 11394205993, 0)", "properties": {"__folium_color": "blue", "highway": "tertiary", "lanes": "2", "length": 6.126810491408003, "maxspeed": "30", "name": "Rue du Square Victoria", "oneway": true, "osmid": "1338141809", "ref": null, "reversed": false, "scenic_context": "Mixed / Urban", "scenic_cost": 10.412816181321773, "scenic_score": "0.5883913040161133", "width": null}, "type": "Feature"}, {"bbox": [-73.5618699, 45.5013629, -73.5618394, 45.5014012], "geometry": {"coordinates": [[-73.5618699, 45.5013629], [-73.5618394, 45.5014012]], "type": "LineString"}, "id": "(11394205993, 12359866574, 0)", "properties": {"__folium_color": "blue", "highway": "cycleway", "lanes": null, "length": 4.877238724300663, "maxspeed": null, "name": "Rue Saint-Antoine Ouest", "oneway": false, "osmid": "1339096630", "ref": null, "reversed": false, "scenic_context": "Inferred (Path)", "scenic_cost": 6.096548405375828, "scenic_score": "0.8", "width": null}, "type": "Feature"}, {"bbox": [-73.5618394, 45.5014012, -73.5615817, 45.5017039], "geometry": {"coordinates": [[-73.5618394, 45.5014012], [-73.5618171, 45.5014293], [-73.5617936, 45.5014572], [-73.5616647, 45.5016121], [-73.56166, 45.5016184], [-73.5616383, 45.5016426], [-73.5615817, 45.5017039]], "type": "LineString"}, "id": "(12359866574, 11334779843, 0)", "properties": {"__folium_color": "blue", "highway": "cycleway", "lanes": null, "length": 39.20553228253292, "maxspeed": null, "name": "Rue Saint-Antoine Ouest", "oneway": false, "osmid": "[1335148320, 1335148317, 1339096630]", "ref": null, "reversed": false, "scenic_context": "Inferred (Path)", "scenic_cost": 49.00691535316615, "scenic_score": "0.8", "width": null}, "type": "Feature"}, {"bbox": [-73.5615817, 45.5017039, -73.561172, 45.5022061], "geometry": {"coordinates": [[-73.5615817, 45.5017039], [-73.5615243, 45.5017649], [-73.5615108, 45.5017804], [-73.5611983, 45.5021731], [-73.561172, 45.5022061]], "type": "LineString"}, "id": "(11334779843, 11334779840, 0)", "properties": {"__folium_color": "blue", "highway": "cycleway", "lanes": null, "length": 64.34659186701873, "maxspeed": null, "name": "[\u0027Rue Saint-Antoine Est\u0027, \u0027Rue Saint-Antoine Ouest\u0027]", "oneway": true, "osmid": "[1340125515, 1340125516, 1410869917]", "ref": null, "reversed": false, "scenic_context": "Dedicated Bike Lane \ud83d\udeb2", "scenic_cost": 64.34659186701873, "scenic_score": "1.0", "width": "1.5"}, "type": "Feature"}, {"bbox": [-73.561172, 45.5022061, -73.5603266, 45.5031773], "geometry": {"coordinates": [[-73.561172, 45.5022061], [-73.5611409, 45.5022425], [-73.5603921, 45.5031009], [-73.5603721, 45.5031239], [-73.5603266, 45.5031773]], "type": "LineString"}, "id": "(11334779840, 11334779838, 0)", "properties": {"__folium_color": "blue", "highway": "cycleway", "lanes": null, "length": 126.50465193841806, "maxspeed": null, "name": "Rue Saint-Antoine Est", "oneway": true, "osmid": "[1340125516, 1340125509, 1340125510]", "ref": null, "reversed": false, "scenic_context": "Mixed / Urban", "scenic_cost": 237.24311324911676, "scenic_score": "0.5332279205322266", "width": "1.5"}, "type": "Feature"}, {"bbox": [-73.5603266, 45.5031773, -73.5595434, 45.5041044], "geometry": {"coordinates": [[-73.5603266, 45.5031773], [-73.5602583, 45.5032564], [-73.5595749, 45.5040659], [-73.5595434, 45.5041044]], "type": "LineString"}, "id": "(11334779838, 11334779836, 0)", "properties": {"__folium_color": "blue", "highway": "cycleway", "lanes": null, "length": 119.80425376634928, "maxspeed": null, "name": "Rue Saint-Antoine Est", "oneway": true, "osmid": "[1340125512, 1340125510, 1340125511]", "ref": null, "reversed": false, "scenic_context": "Mixed / Urban", "scenic_cost": 359.11514714149894, "scenic_score": "0.33360958099365234", "width": "1.5"}, "type": "Feature"}, {"bbox": [-73.5595434, 45.5041044, -73.5591134, 45.5046192], "geometry": {"coordinates": [[-73.5595434, 45.5041044], [-73.5595139, 45.504141], [-73.5591646, 45.5045567], [-73.5591452, 45.5045796], [-73.5591402, 45.5045858], [-73.5591134, 45.5046192]], "type": "LineString"}, "id": "(11334779836, 11334779848, 0)", "properties": {"__folium_color": "blue", "highway": "cycleway", "lanes": null, "length": 66.33211766851963, "maxspeed": null, "name": "Rue Saint-Antoine Est", "oneway": true, "osmid": "[1340125512, 1340125513, 1340125514]", "ref": null, "reversed": false, "scenic_context": "Mixed / Urban", "scenic_cost": 120.3082098897239, "scenic_score": "0.5513515472412109", "width": "1.5"}, "type": "Feature"}, {"bbox": [-73.5591134, 45.5046192, -73.5582008, 45.5056782], "geometry": {"coordinates": [[-73.5591134, 45.5046192], [-73.5590798, 45.504657], [-73.5590726, 45.5046653], [-73.5582629, 45.5056075], [-73.5582008, 45.5056782]], "type": "LineString"}, "id": "(11334779848, 11334779851, 0)", "properties": {"__folium_color": "blue", "highway": "cycleway", "lanes": null, "length": 137.56670375708006, "maxspeed": null, "name": "Rue Saint-Antoine Est", "oneway": true, "osmid": "[1340125514, 1242851213, 1242851214]", "ref": null, "reversed": false, "scenic_context": "Dedicated Bike Lane \ud83d\udeb2", "scenic_cost": 173.06604866544265, "scenic_score": "0.7948797861735026", "width": "1.5"}, "type": "Feature"}, {"bbox": [-73.5582008, 45.5056782, -73.5572521, 45.5068767], "geometry": {"coordinates": [[-73.5582008, 45.5056782], [-73.5581596, 45.5057225], [-73.5575689, 45.5064072], [-73.557505, 45.5064818], [-73.5572683, 45.5067522], [-73.5572521, 45.5067708], [-73.5572769, 45.5068767]], "type": "LineString"}, "id": "(11334779851, 6721030573, 0)", "properties": {"__folium_color": "blue", "highway": "cycleway", "lanes": null, "length": 154.15511219319916, "maxspeed": null, "name": "Rue Saint-Antoine Est", "oneway": true, "osmid": "[1280052558, 1242851214, 1280052559]", "ref": null, "reversed": false, "scenic_context": "Inferred (Path)", "scenic_cost": 192.69389024149893, "scenic_score": "0.8", "width": "1.5"}, "type": "Feature"}, {"bbox": [-73.5572769, 45.5066715, -73.5567975, 45.5068767], "geometry": {"coordinates": [[-73.5572769, 45.5068767], [-73.5572283, 45.5068551], [-73.5571612, 45.5068253], [-73.5571453, 45.5068181], [-73.5571101, 45.5068035], [-73.5567975, 45.5066715]], "type": "LineString"}, "id": "(6721030573, 1860899910, 0)", "properties": {"__folium_color": "blue", "highway": "tertiary", "lanes": "2", "length": 43.778433303639986, "maxspeed": "40", "name": "Boulevard Saint-Laurent", "oneway": false, "osmid": "330718542", "ref": null, "reversed": true, "scenic_context": "No Data", "scenic_cost": 87.55686660727997, "scenic_score": "0.5", "width": null}, "type": "Feature"}, {"bbox": [-73.5567975, 45.5064939, -73.5563669, 45.5066715], "geometry": {"coordinates": [[-73.5567975, 45.5066715], [-73.5564935, 45.5065466], [-73.5564502, 45.5065288], [-73.5563669, 45.5064939]], "type": "LineString"}, "id": "(1860899910, 2007139005, 0)", "properties": {"__folium_color": "blue", "highway": "tertiary", "lanes": "2", "length": 38.93607587029093, "maxspeed": "40", "name": "Boulevard Saint-Laurent", "oneway": false, "osmid": "330718542", "ref": null, "reversed": true, "scenic_context": "Mixed / Urban", "scenic_cost": 77.3205865820869, "scenic_score": "0.5035667419433594", "width": null}, "type": "Feature"}, {"bbox": [-73.5563669, 45.5061993, -73.5556527, 45.5064939], "geometry": {"coordinates": [[-73.5563669, 45.5064939], [-73.5562858, 45.5064605], [-73.5562623, 45.5064506], [-73.5557986, 45.5062553], [-73.5557393, 45.5062304], [-73.5556527, 45.5061993]], "type": "LineString"}, "id": "(2007139005, 2007139004, 0)", "properties": {"__folium_color": "blue", "highway": "tertiary", "lanes": "2", "length": 64.59648016859124, "maxspeed": "40", "name": "Boulevard Saint-Laurent", "oneway": false, "osmid": "330718600", "ref": null, "reversed": true, "scenic_context": "No Data", "scenic_cost": 129.19296033718248, "scenic_score": "0.5", "width": null}, "type": "Feature"}, {"bbox": [-73.5556527, 45.5057806, -73.5544589, 45.5061993], "geometry": {"coordinates": [[-73.5556527, 45.5061993], [-73.555576, 45.5061686], [-73.5555512, 45.50616], [-73.5544589, 45.5057806]], "type": "LineString"}, "id": "(2007139004, 460315112, 0)", "properties": {"__folium_color": "blue", "highway": "tertiary", "lanes": "2", "length": 104.04263972469926, "maxspeed": "40", "name": "Boulevard Saint-Laurent", "oneway": false, "osmid": "456343514", "ref": null, "reversed": true, "scenic_context": "No Data", "scenic_cost": 208.0852794493985, "scenic_score": "0.5", "width": null}, "type": "Feature"}, {"bbox": [-73.5544589, 45.5057806, -73.5542727, 45.5060681], "geometry": {"coordinates": [[-73.5544589, 45.5057806], [-73.5544112, 45.5058542], [-73.5542897, 45.5060419], [-73.5542727, 45.5060681]], "type": "LineString"}, "id": "(460315112, 460315125, 0)", "properties": {"__folium_color": "blue", "highway": "unclassified", "lanes": null, "length": 35.107609728861014, "maxspeed": null, "name": "Rue Le Royer Est", "oneway": false, "osmid": "38802037", "ref": null, "reversed": false, "scenic_context": "No Data", "scenic_cost": 70.21521945772203, "scenic_score": "0.5", "width": null}, "type": "Feature"}, {"bbox": [-73.5542727, 45.5060159, -73.5541407, 45.5060681], "geometry": {"coordinates": [[-73.5542727, 45.5060681], [-73.5541982, 45.5060388], [-73.5541407, 45.5060159]], "type": "LineString"}, "id": "(460315125, 11653140989, 0)", "properties": {"__folium_color": "blue", "highway": "residential", "lanes": null, "length": 11.811324662955482, "maxspeed": null, "name": "Rue Saint-Jean-Baptiste", "oneway": true, "osmid": "38802036", "ref": null, "reversed": false, "scenic_context": "No Data", "scenic_cost": 23.622649325910963, "scenic_score": "0.5", "width": null}, "type": "Feature"}, {"bbox": [-73.5541407, 45.505819, -73.5536387, 45.5060159], "geometry": {"coordinates": [[-73.5541407, 45.5060159], [-73.5536838, 45.5058337], [-73.5536387, 45.505819]], "type": "LineString"}, "id": "(11653140989, 460315114, 0)", "properties": {"__folium_color": "blue", "highway": "residential", "lanes": null, "length": 44.84248955027938, "maxspeed": null, "name": "Rue Saint-Jean-Baptiste", "oneway": true, "osmid": "38802036", "ref": null, "reversed": false, "scenic_context": "No Data", "scenic_cost": 89.68497910055876, "scenic_score": "0.5", "width": null}, "type": "Feature"}, {"bbox": [-73.5536387, 45.5056359, -73.5530582, 45.505819], "geometry": {"coordinates": [[-73.5536387, 45.505819], [-73.5535979, 45.5058048], [-73.5531639, 45.5056711], [-73.5530582, 45.5056359]], "type": "LineString"}, "id": "(460315114, 468970377, 0)", "properties": {"__folium_color": "blue", "highway": "residential", "lanes": null, "length": 49.61458329066268, "maxspeed": null, "name": "Rue Saint-Jean-Baptiste", "oneway": true, "osmid": "38802036", "ref": null, "reversed": false, "scenic_context": "No Data", "scenic_cost": 99.22916658132536, "scenic_score": "0.5", "width": null}, "type": "Feature"}, {"bbox": [-73.5531844, 45.5053472, -73.5530582, 45.5056359], "geometry": {"coordinates": [[-73.5530582, 45.5056359], [-73.5531396, 45.5054438], [-73.5531505, 45.505418], [-73.5531844, 45.5053472]], "type": "LineString"}, "id": "(468970377, 26233372, 0)", "properties": {"__folium_color": "blue", "highway": "tertiary", "lanes": "2", "length": 33.57859973662553, "maxspeed": "40", "name": "Rue de la Commune Est", "oneway": false, "osmid": "1419279436", "ref": null, "reversed": false, "scenic_context": "No Data", "scenic_cost": 67.15719947325105, "scenic_score": "0.5", "width": null}, "type": "Feature"}, {"bbox": [-73.5533485, 45.5049737, -73.5531844, 45.5053472], "geometry": {"coordinates": [[-73.5531844, 45.5053472], [-73.5532203, 45.5052697], [-73.553231, 45.5052449], [-73.5533485, 45.5049737]], "type": "LineString"}, "id": "(26233372, 864716953, 0)", "properties": {"__folium_color": "blue", "highway": "tertiary", "lanes": "2", "length": 43.45701863601887, "maxspeed": "40", "name": "Rue de la Commune Ouest", "oneway": false, "osmid": "1390081192", "ref": null, "reversed": true, "scenic_context": "No Data", "scenic_cost": 86.91403727203775, "scenic_score": "0.5", "width": null}, "type": "Feature"}], "type": "FeatureCollection"});
+
+        
+    
+    geo_json_7b828ca0b1cc8af738345c8bf652cbfe.bindTooltip(
+    function(layer){
+    let div = L.DomUtil.create('div');
+    
+    let handleObject = feature => {
+        if (feature === null) {
+            return '';
+        } else if (typeof(feature)=='object') {
+            return JSON.stringify(feature);
+        } else {
+            return feature;
+        }
+    }
+    let fields = ["osmid", "highway", "lanes", "maxspeed", "name", "ref", "oneway", "reversed", "length", "scenic_score", "scenic_context", "scenic_cost", "width"];
+    let aliases = ["osmid", "highway", "lanes", "maxspeed", "name", "ref", "oneway", "reversed", "length", "scenic_score", "scenic_context", "scenic_cost", "width"];
+    let table = '<table>' +
+        String(
+        fields.map(
+        (v,i)=>
+        `<tr>
+            <th>${aliases[i]}</th>
+            
+            <td>${handleObject(layer.feature.properties[v])}</td>
+        </tr>`).join(''))
+    +'</table>';
+    div.innerHTML=table;
+    
+    return div
+    }
+    ,{
+  "sticky": true,
+  "className": "foliumtooltip",
+});
+                     
+    
+            geo_json_7b828ca0b1cc8af738345c8bf652cbfe.addTo(map_6f934b44c5e2c8a7799a43f05e862a6f);
+        
+</script>
+</html>
