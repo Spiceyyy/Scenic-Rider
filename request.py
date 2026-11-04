@@ -6,7 +6,15 @@ from datetime import datetime
 from calculate_score import calculate_score
 
 # --- CONFIGURATION ---
-MAPILLARY_TOKEN = "MLY|24871549075857260|49e4f5c2fe54fa7f7253ab756fa2239b"
+# The token is read from the MAPILLARY_TOKEN environment variable (put it in .env).
+try:
+    from dotenv import load_dotenv
+    load_dotenv(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env"))
+except ImportError:
+    pass
+MAPILLARY_TOKEN = os.environ.get("MAPILLARY_TOKEN")
+if not MAPILLARY_TOKEN:
+    raise RuntimeError("MAPILLARY_TOKEN is not set. Add it to your .env file.")
 SEARCH_URL = "https://graph.mapillary.com/images"
 MIN_DATE = "2020-01-01"
 
