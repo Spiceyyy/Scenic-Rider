@@ -125,16 +125,19 @@ def upsert_scores(cur, scores, method_ids: dict, source_id) -> dict:
             score = EXCLUDED.score, context = EXCLUDED.context,
             context_label = EXCLUDED.context_label, method_id = EXCLUDED.method_id,
             source_id = EXCLUDED.source_id, row_hash = EXCLUDED.row_hash, updated_at = now()
-        WHERE scenic_score.row_hash IS DISTINCT FROM EXCLUDED.row_hash
-           OR scenic_score.method_id IS DISTINCT FROM EXCLUDED.method_id
+        WHERE (scenic_score.row_hash IS DISTINCT FROM EXCLUDED.row_hash
+               OR scenic_score.method_id IS DISTINCT FROM EXCLUDED.method_id)
+          -- never let an old graph file overwrite a score produced from a real image
+          -- by the database scorer (python -m etl score)
+          AND scenic_score.image_id IS NULL
         RETURNING (xmax = 0)
         """, "(%s, %s, %s, %s, %s, %s, %s, %s, %s)", rows)
 
 
-def start_run(conn, source_file: str) -> int:
+def start_run(conn, source_file: str, job: str = "graph_load") -> int:
     with conn.cursor() as cur:
-        cur.execute("INSERT INTO etl_run (status, source_file) VALUES ('running', %s) RETURNING run_id",
-                    (source_file,))
+        cur.execute("INSERT INTO etl_run (status, source_file, job) VALUES ('running', %s, %s) "
+                    "RETURNING run_id", (source_file, job))
         run_id = cur.fetchone()[0]
     conn.commit()
     return run_id
@@ -148,3 +151,18 @@ def finish_run(conn, run_id, status, source_id=None, stats=None, error=None):
             (status, source_id, Json(stats) if stats is not None else None, error, run_id),
         )
     conn.commit()
+
+
+def resolve_sector_ids(cur, slugs=None, city=None):
+    """Turn --sector / --city CLI filters into sector_ids. None means 'no filter'."""
+    if not slugs and not city:
+        return None
+    cur.execute("SELECT sector_id, slug FROM sector WHERE slug = ANY(%s) OR city ILIKE %s",
+                (list(slugs or []), city or ""))
+    rows = cur.fetchall()
+    missing = set(slugs or []) - {slug for _, slug in rows}
+    if missing or not rows:
+        cur.execute("SELECT slug, city FROM sector ORDER BY city, slug")
+        known = ", ".join(f"{s} ({c})" for s, c in cur.fetchall()) or "none yet"
+        raise ValueError(f"Unknown sector/city {sorted(missing) or city!r}. Known sectors: {known}")
+    return [sid for sid, _ in rows]

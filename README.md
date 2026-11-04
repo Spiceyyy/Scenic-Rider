@@ -79,3 +79,23 @@ pytest                            # DB tests run only if TEST_DATABASE_URL is se
 
 Tables: `data_source`, `score_method`, `road_node`, `road_segment`, `scenic_score`, `etl_run` (see `db/schema.sql`).
 Re-runs upsert by natural key `(u, v, key)` / `osmid` and update a row only when its content hash changes.
+
+### Database-first scoring
+The database is the source of truth; the GraphML file for the app is generated from it.
+
+```bash
+python -m etl add-sector "Westmount, Quebec, Canada" --city Montreal   # OSM -> database, no file
+python -m etl add-sector "Ville-Marie, Montreal, Canada" --link-only   # tag data already loaded
+python -m etl sectors                  # every sector with its scoring progress
+python -m etl score --dry-run          # how many streets still lack an image-based score
+python -m etl score --limit 20 --sector westmount   # Mapillary + model, written to PostGIS
+python -m etl export-graph [--city Montreal]        # graphs/db_export.graphml from the database
+```
+
+Rules: one search per street (both directions share it); only segments without a model score are
+targeted; API/download errors never change a score and are retried next run; every lookup is logged
+in `score_attempt` with its status, and scores keep their `image_id`, capture date and distance.
+
+One database holds every city. A sector is one OSM place; `sector_segment` links segments to sectors, so
+a street on a border is stored once and belongs to both. Sectors are downloaded with
+`truncate_by_edge=True` so neighbouring sectors share border intersections and routes can cross them.

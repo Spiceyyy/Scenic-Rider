@@ -90,3 +90,62 @@ CREATE TABLE IF NOT EXISTS etl_run (
     stats       JSONB,                     -- validation issues + insert/update counts
     error       TEXT
 );
+
+-- ---------------------------------------------------------------------------
+-- Database-first scoring (python -m etl score). Added after the initial schema,
+-- hence ALTER ... IF NOT EXISTS so existing databases upgrade in place.
+-- ---------------------------------------------------------------------------
+ALTER TABLE etl_run ADD COLUMN IF NOT EXISTS job TEXT NOT NULL DEFAULT 'graph_load';
+
+-- Scores written by the live scorer have no source file, but do have an image.
+ALTER TABLE scenic_score ALTER COLUMN source_id DROP NOT NULL;
+ALTER TABLE scenic_score ADD COLUMN IF NOT EXISTS image_id TEXT;
+ALTER TABLE scenic_score ADD COLUMN IF NOT EXISTS image_captured_at TIMESTAMPTZ;
+ALTER TABLE scenic_score ADD COLUMN IF NOT EXISTS image_distance_m DOUBLE PRECISION;
+ALTER TABLE scenic_score ADD COLUMN IF NOT EXISTS scored_run_id INTEGER REFERENCES etl_run (run_id);
+
+-- Every Mapillary lookup, successful or not. One attempt covers both directions
+-- of a street (all segments sharing the same geometry).
+CREATE TABLE IF NOT EXISTS score_attempt (
+    attempt_id       BIGSERIAL PRIMARY KEY,
+    run_id           INTEGER NOT NULL REFERENCES etl_run (run_id),
+    street_hash      CHAR(32) NOT NULL,     -- md5 of direction-independent geometry
+    attempted_at     TIMESTAMPTZ NOT NULL DEFAULT now(),
+    status           TEXT NOT NULL CHECK (status IN
+                       ('found', 'no_images', 'api_error', 'download_error', 'score_error')),
+    checkpoint       DOUBLE PRECISION,      -- position along the street that was searched
+    http_status      INTEGER,
+    image_id         TEXT,
+    error            TEXT,
+    segments_updated INTEGER NOT NULL DEFAULT 0
+);
+CREATE INDEX IF NOT EXISTS score_attempt_street_idx ON score_attempt (street_hash, attempted_at);
+
+-- ---------------------------------------------------------------------------
+-- Sectors (python -m etl add-sector). One database for every city; a sector is
+-- one OSM place (e.g. a borough). A segment on a border can belong to several
+-- sectors, hence the link table instead of a column on road_segment.
+-- ---------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS sector (
+    sector_id         SERIAL PRIMARY KEY,
+    name              TEXT NOT NULL UNIQUE,   -- OSM place query, e.g. "Le Sud-Ouest, Montreal, Canada"
+    slug              TEXT NOT NULL UNIQUE,   -- short id used on the CLI, e.g. "le_sud_ouest"
+    city              TEXT NOT NULL,
+    network_type      TEXT NOT NULL DEFAULT 'bike',
+    boundary          geometry(MultiPolygon, 4326),
+    osm_downloaded_at TIMESTAMPTZ,            -- NULL when only linked to existing data
+    created_at        TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at        TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS sector_boundary_gix ON sector USING GIST (boundary);
+CREATE INDEX IF NOT EXISTS sector_city_idx ON sector (city);
+
+CREATE TABLE IF NOT EXISTS sector_segment (
+    sector_id INTEGER NOT NULL REFERENCES sector (sector_id) ON DELETE CASCADE,
+    u         BIGINT  NOT NULL,
+    v         BIGINT  NOT NULL,
+    key       INTEGER NOT NULL,
+    PRIMARY KEY (sector_id, u, v, key),
+    FOREIGN KEY (u, v, key) REFERENCES road_segment (u, v, key) ON DELETE CASCADE
+);
+CREATE INDEX IF NOT EXISTS sector_segment_edge_idx ON sector_segment (u, v, key);

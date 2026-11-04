@@ -84,3 +84,11 @@ def test_validation_rejects_bad_rows(graph_file):
     assert sorted(map(tuple, result.segments[["u", "v", "key"]].values.tolist())) == \
         [(2, 1, 0), (2, 3, 0), (2, 3, 1)]
     assert result.scores["score"].between(0, 1).all()
+
+
+def test_export_restores_list_attributes():
+    from etl.export import _reversed, _split
+    assert _reversed("False") is False
+    assert _reversed("False;True") == [False, True]
+    assert _split("residential;service") == ["residential", "service"]
+    assert _split("residential") == "residential"
