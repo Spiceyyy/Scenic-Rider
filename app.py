@@ -17,7 +17,8 @@ st.markdown("Type in two locations to find the most beautiful bike route between
 @st.cache_resource
 def load_and_prep_graph():
     # G = ox.load_graphml("scenic_graph_complete.graphml")
-    G = ox.load_graphml("graphs/master_scenic_graph.graphml")
+    # G = ox.load_graphml("graphs/master_scenic_graph.graphml")
+    G = ox.load_graphml("graphs/db_export.graphml")
     
     # Pre-calculate the scenic costs so we don't have to do it during routing
     for u, v, key, data in G.edges(keys=True, data=True):
@@ -100,7 +101,7 @@ if st.session_state.route_calculated:
     m = st.session_state.gdf_scenic.explore(
         color="#3388ff", 
         name="Scenic Route",
-        tiles="CartoDB positron",
+        tiles="OpenStreetMap",  # CartoDB tiles now need an API key (watermarked without one)
         style_kwds={"weight": 8, "opacity": 0.9}
     )
 
