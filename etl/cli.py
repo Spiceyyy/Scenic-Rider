@@ -14,6 +14,16 @@ def _print_issues(summary):
               f"  e.g. {i['examples'][:2]}")
 
 
+def _bbox(text):
+    try:
+        x1, y1, x2, y2 = (float(v) for v in text.split(","))
+    except ValueError:
+        raise argparse.ArgumentTypeError("expected MINLON,MINLAT,MAXLON,MAXLAT")
+    if not (x1 < x2 and y1 < y2):
+        raise argparse.ArgumentTypeError("min values must be smaller than max values")
+    return (x1, y1, x2, y2)
+
+
 def _sector_filters(sp):
     sp.add_argument("--sector", action="append",
                     help="only this sector slug (repeatable); see `python -m etl sectors`")
@@ -69,6 +79,12 @@ def main(argv=None):
                     help="skip streets that had no images within this many days (default 30)")
     sp.add_argument("--sleep", type=float, default=0.5, help="seconds between streets")
     sp.add_argument("--dry-run", action="store_true", help="only count what would be searched")
+    sp.add_argument("--rescore-legacy", action="store_true",
+                    help="also re-score model scores loaded from old graph files (no recorded photo)")
+    sp.add_argument("--bbox", type=_bbox, metavar="MINLON,MINLAT,MAXLON,MAXLAT",
+                    help="only streets inside this box")
+    _sector_filters(sp)
+    sp = sub.add_parser("green", help="load parks/woods from OpenStreetMap for the sectors")
     _sector_filters(sp)
     sp = sub.add_parser("export-graph", help="write a GraphML file from the database")
     sp.add_argument("--out", default=str(config.PROJECT_ROOT / "graphs" / "db_export.graphml"))
@@ -91,6 +107,7 @@ def main(argv=None):
         pass
 
     from .pipeline import prepare, run  # heavy imports after arg parsing
+    config.configure_osmnx()
 
     graphs = getattr(args, "graph", None) or [str(config.DEFAULT_GRAPH)]
 
@@ -111,7 +128,7 @@ def main(argv=None):
         if args.cmd == "init-db":
             print(f"Schema '{config.db_schema()}' is ready.")
             return 0
-        if args.cmd in ("score", "export-graph"):
+        if args.cmd in ("score", "export-graph", "green"):
             from .load import resolve_sector_ids
             with conn.cursor() as cur:
                 sector_ids = resolve_sector_ids(cur, args.sector, args.city)
@@ -119,8 +136,15 @@ def main(argv=None):
         if args.cmd == "score":
             from .score import run_scoring
             counts = run_scoring(conn, limit=args.limit, retry_days=args.retry_after_days,
-                                 sleep=args.sleep, dry_run=args.dry_run, sector_ids=sector_ids)
+                                 sleep=args.sleep, dry_run=args.dry_run, sector_ids=sector_ids,
+                                 rescore_legacy=args.rescore_legacy, bbox=args.bbox)
             print(f"Done: {counts}")
+            return 0
+        if args.cmd == "green":
+            from .green import load_green
+            for slug, c in load_green(conn, sector_ids).items():
+                print(f"  {slug:28} green areas found={c['found']:>4} "
+                      f"inserted={c['inserted']:>4} updated={c['updated']:>4}")
             return 0
         if args.cmd == "export-graph":
             from .export import export_graph

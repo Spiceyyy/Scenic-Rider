@@ -17,6 +17,15 @@ except ImportError:
     pass
 
 
+def configure_osmnx():
+    """Optional OVERPASS_URL in .env: use another Overpass server/mirror when the
+    default public one (overpass-api.de) is busy or refuses automated requests."""
+    url = os.environ.get("OVERPASS_URL")
+    if url:
+        import osmnx as ox
+        ox.settings.overpass_url = url.rstrip("/")
+
+
 def database_url() -> str:
     url = os.environ.get("DATABASE_URL")
     if not url:

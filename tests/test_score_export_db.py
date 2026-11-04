@@ -107,7 +107,14 @@ def test_export_round_trip_matches_original(db_conn, graph_file, tmp_path):
     for u, v, k, d in original.edges(keys=True, data=True):
         e = exported[u][v][k]
         assert e["length"] == d["length"]
-        assert e.get("scenic_score") == d.get("scenic_score")
         assert "scenic_score" in d or "scenic_score" not in e
+        if d.get("scenic_context") == "Inferred (Path)":
+            # no green area loaded -> the 0.8 path guess falls back to neutral 0.5
+            assert (e["scenic_score"], e["scenic_raw_score"]) == ("0.5", d["scenic_score"])
+        else:
+            assert e.get("scenic_score") == d.get("scenic_score")
+    for _, _, d in original.edges(data=True):  # same rule applied to the reference graph
+        if d.get("scenic_context") == "Inferred (Path)":
+            d["scenic_score"] = "0.5"
     pairs = [(1, 3), (3, 1), (2, 1)] if nx.has_path(original, 3, 1) else [(1, 3), (2, 1)]
     assert _routes(original, pairs) == _routes(exported, pairs)

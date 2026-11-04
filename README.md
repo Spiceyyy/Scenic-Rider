@@ -96,8 +96,10 @@ The database is the source of truth; the GraphML file for the app is generated f
 python -m etl add-sector "Westmount, Quebec, Canada" --city Montreal   # OSM -> database, no file
 python -m etl add-sector "Ville-Marie, Montreal, Canada" --link-only   # tag data already loaded
 python -m etl sectors                  # every sector with its scoring progress
+python -m etl green                    # parks/woods from OSM (park bonus, see below)
 python -m etl score --dry-run          # how many streets still lack an image-based score
 python -m etl score --limit 20 --sector westmount   # Mapillary + model, written to PostGIS
+python -m etl score --rescore-legacy --bbox=MINLON,MINLAT,MAXLON,MAXLAT  # redo old scores with no recorded photo
 python -m etl export-graph [--city Montreal]        # graphs/db_export.graphml from the database
 ```
 
@@ -108,3 +110,10 @@ in `score_attempt` with its status, and scores keep their `image_id`, capture da
 One database holds every city. A sector is one OSM place; `sector_segment` links segments to sectors, so
 a street on a border is stored once and belongs to both. Sectors are downloaded with
 `truncate_by_edge=True` so neighbouring sectors share border intersections and routes can cross them.
+
+**Final score (`v_segment_score` view).** Raw scores are never modified; routing uses a derived score:
+- `green_share` = fraction of the segment inside a park/wood (`green_area`, from OSM)
+- the "Inferred (Path)" 0.8 guess only counts for segments mostly (>= 50%) inside green; bike lanes
+  beside streets fall back to 0.5
+- `final_score = min(1, base_score + 0.15 * green_share)`; `export-graph` writes it as `scenic_score`
+  (`scenic_raw_score` keeps the original). If overpass-api.de refuses requests, set `OVERPASS_URL` in `.env`.

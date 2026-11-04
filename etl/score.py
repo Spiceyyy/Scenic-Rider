@@ -5,7 +5,9 @@ Rules
 * A "street" is all segments with the same geometry regardless of direction, so a
   two-way street (A->B and B->A) costs one Mapillary search, not two.
 * Only segments without a model score are targeted (unscored, default, inferred,
-  error fallback). Existing model scores are never touched.
+  error fallback). With rescore_legacy=True, model scores that have no recorded
+  photo (loaded from old graph files) are re-scored too. Scores that already come
+  from a recorded photo are never touched.
 * api_error / download_error / score_error never change a score; they are only
   logged in score_attempt so the street is retried next run.
 * no_images: existing fallback scores are kept; unscored segments get the same
@@ -36,7 +38,11 @@ WITH target AS (
     FROM road_segment r
     LEFT JOIN scenic_score s USING (u, v, key)
     LEFT JOIN score_method m USING (method_id)
-    WHERE (s.score IS NULL OR m.method_code <> 'model')
+    WHERE (s.score IS NULL OR m.method_code <> 'model'
+           -- legacy model scores (loaded from old graph files, photo unknown)
+           OR (%(rescore_legacy)s AND s.image_id IS NULL))
+      AND (NOT %(use_bbox)s OR ST_Intersects(
+            r.geom, ST_MakeEnvelope(%(x1)s, %(y1)s, %(x2)s, %(y2)s, 4326)))
       AND (%(all_sectors)s OR EXISTS (
             SELECT 1 FROM sector_segment ss
             WHERE ss.sector_id = ANY(%(sector_ids)s)
@@ -88,10 +94,14 @@ def default_fetch(lat, lon):
     return fetch_and_score(lat, lon)
 
 
-def find_targets(cur, limit, retry_days, sector_ids=None):
+def find_targets(cur, limit, retry_days, sector_ids=None, rescore_legacy=False, bbox=None):
+    x1, y1, x2, y2 = bbox or (0, 0, 0, 0)
     cur.execute(TARGETS_SQL, {"limit": limit, "retry_days": retry_days,
                               "all_sectors": sector_ids is None,
-                              "sector_ids": list(sector_ids or [])})
+                              "sector_ids": list(sector_ids or []),
+                              "rescore_legacy": rescore_legacy,
+                              "use_bbox": bbox is not None,
+                              "x1": x1, "y1": y1, "x2": x2, "y2": y2})
     streets = []
     for row in cur.fetchall():
         (street_hash, us, vs, keys, highways, unscored, npoints, *coords) = row
@@ -155,10 +165,11 @@ def score_street(cur, street, fetch, method_ids, run_id):
 
 
 def run_scoring(conn, limit=50, retry_days=30, fetch=None, sleep=0.5,
-                max_consecutive_failures=5, dry_run=False, log=print, sector_ids=None):
+                max_consecutive_failures=5, dry_run=False, log=print, sector_ids=None,
+                rescore_legacy=False, bbox=None):
     fetch = fetch or default_fetch
     with conn.cursor() as cur:
-        streets = find_targets(cur, limit, retry_days, sector_ids)
+        streets = find_targets(cur, limit, retry_days, sector_ids, rescore_legacy, bbox)
     conn.rollback()
     if dry_run:
         segs = sum(len(s["segments"]) for s in streets)

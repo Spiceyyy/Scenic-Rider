@@ -149,3 +149,57 @@ CREATE TABLE IF NOT EXISTS sector_segment (
     FOREIGN KEY (u, v, key) REFERENCES road_segment (u, v, key) ON DELETE CASCADE
 );
 CREATE INDEX IF NOT EXISTS sector_segment_edge_idx ON sector_segment (u, v, key);
+
+-- ---------------------------------------------------------------------------
+-- Green areas (python -m etl green): parks, gardens, woods from OpenStreetMap.
+-- Used to tell the router "this segment runs through a park", which a single
+-- street photo cannot.
+-- ---------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS green_area (
+    green_id  BIGSERIAL PRIMARY KEY,
+    osm_type  TEXT   NOT NULL,              -- way / relation
+    osm_id    BIGINT NOT NULL,
+    name      TEXT,
+    kind      TEXT   NOT NULL,              -- e.g. leisure=park, natural=wood
+    geom      geometry(MultiPolygon, 4326) NOT NULL,
+    loaded_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    UNIQUE (osm_type, osm_id)
+);
+CREATE INDEX IF NOT EXISTS green_area_geom_gix ON green_area USING GIST (geom);
+
+-- ---------------------------------------------------------------------------
+-- Final score used for routing (raw scores in scenic_score are never modified;
+-- the rules live here so they are visible, versioned and easy to change):
+--   green_share  = fraction of the segment's length inside a green area
+--   base_score   = raw score, except the "Inferred (Path)" 0.8 guess only counts
+--                  when the segment is mostly (>= 50%) inside a green area;
+--                  bike lanes beside streets fall back to the neutral 0.5
+--   final_score  = min(1, base_score + 0.15 * green_share)
+--                  (unscored segments use 0.5 as base only if they touch green)
+-- ---------------------------------------------------------------------------
+DROP VIEW IF EXISTS v_segment_score;
+CREATE VIEW v_segment_score AS
+WITH g AS (
+    SELECT r.u, r.v, r.key,
+           -- COALESCE first: LEAST() ignores NULLs, so LEAST(1, NULL) would be 1
+           LEAST(1.0, COALESCE(gs.inside_m / NULLIF(ST_Length(r.geom::geography), 0), 0))
+               AS green_share
+    FROM road_segment r
+    LEFT JOIN LATERAL (
+        SELECT ST_Length(ST_Intersection(r.geom, ST_Union(ga.geom))::geography) AS inside_m
+        FROM green_area ga
+        WHERE ST_Intersects(r.geom, ga.geom)
+    ) gs ON TRUE
+), b AS (
+    SELECT g.u, g.v, g.key, g.green_share, s.score AS raw_score, s.context, m.method_code,
+           CASE WHEN s.score IS NULL THEN NULL
+                WHEN m.method_code = 'inferred_tag' AND g.green_share < 0.5 THEN 0.5
+                ELSE s.score END AS base_score
+    FROM g
+    LEFT JOIN scenic_score s USING (u, v, key)
+    LEFT JOIN score_method m USING (method_id)
+)
+SELECT u, v, key, raw_score, base_score, green_share, context, method_code,
+       CASE WHEN base_score IS NULL AND green_share = 0 THEN NULL
+            ELSE LEAST(1.0, COALESCE(base_score, 0.5) + 0.15 * green_share) END AS final_score
+FROM b;

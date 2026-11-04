@@ -1,5 +1,8 @@
 """Export: rebuild an OSMnx GraphML file from PostGIS (database -> graph file).
 
+scenic_score in the file is the FINAL score from v_segment_score (raw score plus
+the park bonus / inferred-path rule); scenic_raw_score keeps the original value.
+
 The result has the attributes app.py / find_scenic_route.py rely on: node x/y,
 edge length, geometry, scenic_score, scenic_context, plus the other OSM tags.
 """
@@ -27,10 +30,10 @@ ORDER BY n.osmid
 EDGES_SQL = f"""
 WITH sel AS ({_SELECTED})
 SELECT r.u, r.v, r.key, r.osm_way_ids, r.name, r.highway, r.oneway, r.reversed,
-       r.length_m, r.osm_tags, ST_AsBinary(r.geom), s.score, s.context, m.method_code
+       r.length_m, r.osm_tags, ST_AsBinary(r.geom),
+       f.final_score, f.context, f.method_code, f.raw_score, f.green_share
 FROM sel r
-LEFT JOIN scenic_score s USING (u, v, key)
-LEFT JOIN score_method m USING (method_id)
+JOIN v_segment_score f USING (u, v, key)   -- final score = raw score + rules (see schema.sql)
 ORDER BY r.u, r.v, r.key
 """
 
@@ -76,7 +79,7 @@ def export_graph(conn, out_path, sector_ids=None):
 
     records = []
     for (u, v, key, way_ids, name, highway, oneway, rev, length, tags, wkb,
-         score, context, method) in edge_rows:
+         score, context, method, raw_score, green_share) in edge_rows:
         rec = dict(tags or {})
         rec.update({
             "u": u, "v": v, "key": key,
@@ -86,7 +89,8 @@ def export_graph(conn, out_path, sector_ids=None):
             "geometry": shapely.from_wkb(bytes(wkb)),
         })
         if score is not None:  # unscored edges stay unscored (app fills 0.5)
-            rec.update(scenic_score=score, scenic_context=context, scenic_method=method)
+            rec.update(scenic_score=score, scenic_context=context, scenic_method=method,
+                       scenic_raw_score=raw_score, green_share=round(green_share, 3))
         records.append(rec)
     edges = gpd.GeoDataFrame(records, geometry="geometry", crs="EPSG:4326").set_index(["u", "v", "key"])
 
