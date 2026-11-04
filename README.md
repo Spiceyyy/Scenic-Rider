@@ -62,3 +62,20 @@ end_coords = (45.5071, -73.5875)   # Mount Royal Park
 path = rg.get_best_vibe(start_coords, end_coords)
 path.show()
 ```
+
+## 🗄️ PostGIS ETL (Phase 1)
+Loads the existing scored graphs (`graphs/*.graphml`) into PostgreSQL/PostGIS. No model inference is run; routing still reads GraphML.
+
+```bash
+pip install -r requirements-etl.txt
+cp .env.example .env              # set POSTGRES_PASSWORD and DATABASE_URL
+docker compose up -d --wait       # PostGIS on localhost:5433
+python -m etl validate            # data-quality checks only, no DB
+python -m etl init-db             # create schema "scenic" (idempotent)
+python -m etl run                 # load master graph; re-runs are no-ops
+python -m etl run --graph graphs/graph_le_plateau_mont_royal.graphml --strict
+pytest                            # DB tests run only if TEST_DATABASE_URL is set
+```
+
+Tables: `data_source`, `score_method`, `road_node`, `road_segment`, `scenic_score`, `etl_run` (see `db/schema.sql`).
+Re-runs upsert by natural key `(u, v, key)` / `osmid` and update a row only when its content hash changes.
