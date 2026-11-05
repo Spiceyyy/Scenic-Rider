@@ -147,7 +147,7 @@ def calculate_score(image_path, debug=False):
 
 if __name__ == "__main__":
     # Auto-download a test image
-    test_img = "ugly2.jpg"
+    test_img = "samples/ugly2.jpg"
     if not os.path.exists(test_img):
         url = "https://raw.githubusercontent.com/pytorch/hub/master/images/deeplab1.png"
         urllib.request.urlretrieve(url, test_img)

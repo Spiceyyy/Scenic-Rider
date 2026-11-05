@@ -4,12 +4,12 @@ import geopandas as gpd
 import os
 
 # 1. LOAD THE MASTER GRAPH
-filename = "master_scenic_graph.graphml"
+filename = "graphs/db_export.graphml"  # python -m etl export-graph
 print(f"Loading {filename}... (This might take a moment depending on how big it is!)")
 try:
     G = ox.load_graphml(filename)
 except FileNotFoundError:
-    print(f"❌ Error: Could not find '{filename}'. Did you run combine_graphs.py first?")
+    print(f"❌ Error: Could not find '{filename}'. Run: python -m etl export-graph")
     exit()
 
 print(f"Graph loaded! Nodes: {len(G.nodes)} | Edges (Streets): {len(G.edges)}")
@@ -30,7 +30,7 @@ print("Painting the map...")
 m = gdf_edges.explore(
     column="scenic_score",
     cmap="RdYlGn",               # Red (Ugly) -> Yellow (Neutral) -> Green (Beautiful)
-    tiles="CartoDB positron",   
+    tiles="OpenStreetMap",   
     style_kwds={"weight": 3, "opacity": 0.8}  
 )
 

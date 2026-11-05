@@ -1,4 +1,14 @@
-stremalit
+# App + scoring (see requirements-etl.txt for the database pipeline and tests)
+streamlit
 streamlit-folium
-osmnx
-networkx
+folium
+osmnx>=2.0
+networkx>=3.0
+geopandas>=1.0
+pandas
+numpy
+requests
+python-dotenv
+pillow
+torch
+transformers

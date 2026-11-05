@@ -4,7 +4,7 @@ import pandas as pd
 import folium
 
 # 1. LOAD THE GRAPH
-filename = "scenic_graph_complete.graphml"
+filename = "graphs/db_export.graphml"  # python -m etl export-graph
 print(f"Loading {filename}...")
 G = ox.load_graphml(filename)
 
@@ -73,7 +73,7 @@ print("Generating comparison map...")
 m = gdf_scenic.explore(
     color="#3388ff", 
     name="Scenic Route",
-    tiles="CartoDB positron",
+    tiles="OpenStreetMap",
     style_kwds={"weight": 8, "opacity": 0.9}
 )
 
@@ -86,6 +86,6 @@ gdf_fast.explore(
 
 folium.LayerControl().add_to(m)
 
-output_file = "route_comparison.html"
+output_file = "maps/route_comparison.html"
 m.save(output_file)
 print(f"✅ Success! Open '{output_file}' to see both routes.")
