@@ -2,3 +2,8 @@
 __pycache__/
 .pytest_cache/
 graphs/db_export.graphml
+*.pyc
+# OSMnx/Overpass HTTP cache (re-downloaded automatically)
+cache/
+# scratch image written while scoring
+temp_scan.jpg

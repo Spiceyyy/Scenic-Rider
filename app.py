@@ -1,3 +1,4 @@
+import os
 import streamlit as st
 import osmnx as ox
 import networkx as nx
@@ -16,9 +17,12 @@ st.markdown("Type in two locations to find the most beautiful bike route between
 # Otherwise, it would take 10 seconds to reload the GraphML file every time you click a button!
 @st.cache_resource
 def load_and_prep_graph():
-    # G = ox.load_graphml("scenic_graph_complete.graphml")
-    # G = ox.load_graphml("graphs/master_scenic_graph.graphml")
-    G = ox.load_graphml("graphs/db_export.graphml")
+    # db_export.graphml is generated from the database (python -m etl export-graph);
+    # fall back to the committed master graph on a fresh clone without a database.
+    path = "graphs/db_export.graphml"
+    if not os.path.exists(path):
+        path = "graphs/master_scenic_graph.graphml"
+    G = ox.load_graphml(path)
     
     # Pre-calculate the scenic costs so we don't have to do it during routing
     for u, v, key, data in G.edges(keys=True, data=True):
